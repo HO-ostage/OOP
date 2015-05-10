@@ -1,20 +1,20 @@
-#include "Factory.h"
-#include "Shapes.h"
+#include "Factory.hpp"
+#include "Shapes.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <typeinfo>
 
 
 int main()
 {
-	
-	Factory * factory = new Factory();
+	Factory factory;
 	XList<Shape *> shapes;
 
-	shapes.addHead(factory->createPoint());
-	shapes.addTail(factory->createCircle());
-	shapes.addTail(factory->createPolyline());
-	shapes.addTail(factory->createPolygon());
-	shapes.addTail(factory->createRect());
+	shapes.addTail(factory.createPoint());
+	shapes.addTail(factory.createCircle());
+	shapes.addTail(factory.createPolyline());
+	shapes.addTail(factory.createPolygon());
+	shapes.addTail(factory.createRect());
 
 	for (int i = 0; i < 16; ++i)
 	{
@@ -23,27 +23,27 @@ int main()
 		{
 			case 0:
 			{
-				shapes.addTail(factory->createCircle());
+				shapes.addTail(factory.createCircle());
 				break;
 			}
 			case 1:
 			{
-				shapes.addTail(factory->createPolyline());
+				shapes.addTail(factory.createPolyline());
 				break;
 			}
 			case 2:
 			{
-				shapes.addTail(factory->createPoint());
+				shapes.addTail(factory.createPoint());
 				break;
 			}
 			case 3:
 			{
-				shapes.addTail(factory->createRect());
+				shapes.addTail(factory.createRect());
 				break;
 			}
 			case 4:
 			{
-				shapes.addTail(factory->createPolygon());
+				shapes.addTail(factory.createPolygon());
 				break;
 			}
 		}
@@ -56,9 +56,9 @@ int main()
 	for (XList<Shape*>::iterator it(shapes.begin()); it != shapes.end(); ++it)
 	{
 		
-		if (Point * tmp = dynamic_cast<Point *>(*it)) {
+		if (typeid(*it) == typeid(Point)) {
 			++count;
-			std::cout << *tmp;
+			std::cout << (*it);
 		}
 	}
 	std::cout << "There is " << count << " points" << std::endl;
@@ -66,10 +66,9 @@ int main()
 	count = 0;
 	for (XList<Shape*>::iterator it(shapes.begin()); it != shapes.end(); ++it)
 	{
-		
-		if (Circle * tmp = dynamic_cast<Circle *>(*it)) {
+		if (typeid(*it) == typeid(Circle)) {
 			++count;
-			std::cout << *tmp;
+			std::cout << (*it);
 		}
 	}
 	std::cout << "There is " << count << " circles" << std::endl;
@@ -77,9 +76,9 @@ int main()
 	count = 0;
 	for (XList<Shape*>::iterator it(shapes.begin()); it != shapes.end(); ++it)
 	{
-		if (Rect * tmp = dynamic_cast<Rect *>(*it)) {
+		if (typeid(*it) == typeid(Circle)) {
 			++count;
-			std::cout << *tmp;
+			std::cout << (*it);
 		}
 	}
 	std::cout << "There is " << count << " rects" << std::endl;
@@ -87,9 +86,9 @@ int main()
 	count = 0;
 	for (XList<Shape*>::iterator it(shapes.begin()); it != shapes.end(); ++it)
 	{
-		if (Polyline * tmp = dynamic_cast<Polyline *>(*it)) {
+		if (typeid(*it) == typeid(Polyline)) {
 			++count;
-			std::cout << *tmp;
+			std::cout << (*it);
 		}
 	}
 	std::cout << "There is " << count << " polylines" << std::endl;
@@ -97,9 +96,9 @@ int main()
 	count = 0;
 	for (XList<Shape*>::iterator it(shapes.begin()); it != shapes.end(); ++it)
 	{
-		if (Polygon * tmp = dynamic_cast<Polygon *>(*it)) {
+		if (typeid(*it) == typeid(Polygon)) {
 			++count;
-			std::cout << *tmp;
+			std::cout << (*it);
 		}
 	}
 	std::cout << "There is " << count << " polygones" << std::endl;

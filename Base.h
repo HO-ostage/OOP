@@ -5,15 +5,19 @@
 class Named
 {
 public:
-	Named(const char * name) : _name(name) {};
-	Named() {};
-protected:
+	Named(std::string& name) : _name(name) {};
+	
+	std::string getName(void) const;
+	void setName(std::string name);
+
+private:
 	std::string _name;
 };
 
 class Printable : virtual public Named
 {
 public:
-	Printable(const char * name) { _name = name; };
-	std::string getName(void) const;
+	Printable(std::string& name) : Named(name) {};
+
+	virtual std::string print() const;
 };

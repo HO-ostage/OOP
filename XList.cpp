@@ -5,30 +5,22 @@
 #define NULL nullptr
 #endif
 
-
-template <class T>
-struct XLink {
-	XLink * _next;
-	XLink * _prev;
-	T _data;
-};
-
 template <class T>
 class XList{
 public:
 	class iterator;
 
-	iterator begin()
+	iterator begin() const
 	{
 		return iterator(_head);
 	};
-	iterator end()
+	iterator end() const
 	{
 		return iterator(_tail->_next);
 	};
 
 	XList<T>() : _head(NULL), _tail(NULL), _size(0) {};
-	XList<T>(T data)
+	XList<T>(T& data)
 	{
 		XLink<T> * elem = new XLink<T>();
 		elem->_data = data;
@@ -43,7 +35,7 @@ public:
 	~XList<T>()
 	{
 		XLink<T> * toDel = _head;
-		while (toDel != NULL)
+		while (toDel)
 		{
 			_head = _head->_next;
 			delete toDel;
@@ -51,112 +43,113 @@ public:
 		}
 	};
 
-	XLink<T> * addTail(const T data)
+	void addTail(const T& data)
 	{
 		XLink<T> * elem = new XLink<T>();
 		elem->_data = data;
 		elem->_prev = _tail;
 		elem->_next = NULL;
 
-		if (_tail)
-		{
-			_tail = elem;
-			_tail->_prev->_next = _tail;
-		}
-		else
-		{
-			_tail = elem;
-			_head = elem;
-		}
-		++_size;
+		_tail = elem;
 
-		return _tail;
+		if (!_head)
+			_head = elem;
+		else
+			_tail->_prev->_next = _tail;
+
+		++_size;
 	};
-	XLink<T> * addHead(const T data)
+	void addHead(const T& data)
 	{
 		XLink<T> * elem = new XLink<T>();
 		elem->_data = data;
 		elem->_prev = NULL;
 		elem->_next = _head;
 
-		if (_head)
-		{
-			_head = elem;
-			_head->_next->_prev = _head;
-		}
-		else
-		{
-			_head = elem;
+		_head = elem;
+
+		if (!_tail)
 			_tail = elem;
-		}
+		else
+			_head->_next->_prev = _head;
 		
 		++_size;
-
-		return _head;
 	};
-	XLink<T> * delTail(void)
+	void delTail()
 	{
+		if (!_tail)
+			throw std::exception("Tail == NULL");
+
 		XLink<T> * toDel = _tail;
 		
-		_tail = _tail->_prev;
-		_tail->_next = NULL;
+		if (_tail == _head)
+			_head = _tail = NULL
+		else
+		{
+			_tail = _tail->_prev;
+			_tail->_next = NULL;
+		}
 
 		delete toDel;
 
 		--_size;
-
-		return _tail;
 	};
-	XLink<T> * delHead(void)
+	void delHead()
 	{
+		if (!_head)
+			throw std::exception("Head == NULL");
+
 		XLink<T> * toDel = _head;
 
-		_head = _head->_next;
-		_head->_prev = NULL;
+		if (_tail == _head)
+			_head = _tail = NULL
+		else
+		{
+			_head = _head->_next;
+			_head->_prev = NULL;
+		}
 
 		delete toDel;
-		
-		--_size;
 
-		return _head;
+		--_size;
 	};
 
-	T& getHead(void) const
+	T& getHead() const
 	{
-		if (_head == NULL)
-			throw std::exception & Exception;
+		if (!_head)
+			throw std::exception;
 		return _head->_data;
 	};
-	T& getTail(void) const
+	T& getTail() const
 	{
-		if (_tail == NULL)
-			throw std::exception & Exception;
+		if (!_tail)
+			throw std::exception;
 		return _tail->_data;
 	};
 
-	unsigned short getSize(void) const
+	unsigned short getSize() const
 	{
 		return _size;
 	};
 
-	bool isEmpty(void) const
+	bool isEmpty() const
 	{
-		return (_tail == NULL && _head == NULL)	
+		return _head;
 	};
 
-	void clear(void)
+	void clear()
 	{
-		XLink<T> * elem = this->_head;
+		XLink<T> * elem = _head;
 
-		while (this->_head != NULL)
+		while (_head)
 		{
-			this->_head = this->_head->_next;
+			_head = _head->_next;
 			delete elem;
-			elem = this->_head;
+			elem = _head;
 		}
 
-		this->_tail = NULL;
-		this->_size = 0;
+		_tail = NULL;
+		_size = 0;
 	};
 
 	class iterator
@@ -169,7 +162,7 @@ public:
 			_elem = _elem->_next;
 			return * this;
 		}
-		iterator& operator++(int i) //i++
+		iterator& operator++(int)
 		{
 			XLink<T> * tmp = _elem;
 			
@@ -181,7 +174,7 @@ public:
 			_elem = _elem->_prev;
 			return *this;
 		}
-		iterator& operator--(int i) //i++
+		iterator& operator--(int) 
 		{
 			XLink<T> * tmp = _elem;
 
@@ -208,6 +201,13 @@ public:
 	};
 
 private:
+	template <class T>
+	struct XLink {
+		XLink * _next;
+		XLink * _prev;
+		T _data;
+	};
+
 	XLink<T> * _head;
 	XLink<T> * _tail;
 
